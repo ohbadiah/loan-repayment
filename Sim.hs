@@ -6,9 +6,9 @@ months :: (RealFrac a) => a -> Int
 months t = round $ t * 12
 
 data SimProgress = Sim {
-  elapsedT :: Double
+  elapsedT      :: Double
 , principalPaid :: Double
-, interestPaid :: Double
+, interestPaid  :: Double
 , totalPayments :: Int
 } deriving Eq
 
@@ -23,12 +23,6 @@ simDelta (Sim t p i n) dt dp di = Sim {
   }
 
 initialSimProgress = Sim 0 0 0 0
-
-
-formatMonths :: Int -> String
-formatMonths n = let y = show $ n `div` 12
-                     m = show $ n `mod` 12 in
-                         y ++ " years, " ++ m ++ " months"
 
 paydown :: RepaymentStrategy -> Loan -> SimResult
 paydown repaymentStrategy loan = step repaymentStrategy loan initialSimProgress
@@ -55,16 +49,19 @@ pert :: Loan -> Double -> Double
 pert (Loan principal apr _) years = principal * (exp $ apr * years)
 
 
--- This should be done with a module that gives you formatting strings. Cause, yeah, wtihout that...
+-- This should be done with a module that gives you formatting strings. Cause, yeah, without that...
 instance Show SimProgress where
-  show (Sim t principalPaid interestPaid n) = unlines [timeDesc, paymentBreakdown, payments] where
+  show (Sim t principalPaid interestPaid n) = unlines [timeDesc, paymentBreakdown] where
     timeDesc = "The loan will be paid down in " ++ (formatMonths . months) t ++ "."
     paymentBreakdown = let
       totalPaid = principalPaid + interestPaid
       principalProportion = principalPaid / totalPaid
       interestProportion = interestPaid / totalPaid in
-      unwords ["It took a total of $",
-               (show totalPaid),
-               ",\n", (show principalPaid), "(", (show (100 * principalProportion)), "%) of which was principal, and ",
-               "\n", (show interestPaid), "(", (show (100 * interestProportion)), "%) of which was interest."]
-    payments = "That's a total of " ++ (show n) ++ " payments.\n\n"
+      unwords ["The composition of the payoff was ",
+               (show (100 * principalProportion)), "% principal, and",
+               (show (100 * interestProportion)), "% interest."]
+
+    formatMonths :: Int -> String
+    formatMonths n = let y = show $ n `div` 12
+                         m = show $ n `mod` 12 in
+                     y ++ " years, " ++ m ++ " months"

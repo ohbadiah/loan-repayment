@@ -7,7 +7,7 @@ data Loan = Loan {
   } deriving (Show, Eq)
 
 data RepaymentStrategy = Strategy {
-  paymentsPerYear :: Int
+  paymentsPerYear   :: Int
 , fractionOfMonthly :: Double
   } deriving (Show, Eq)
 
