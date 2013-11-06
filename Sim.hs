@@ -2,9 +2,6 @@ module Sim where
 
 import Loans
 
-months :: (RealFrac a) => a -> Int
-months t = round $ t * 12
-
 data SimProgress = Sim {
   elapsedT      :: Double
 , principalPaid :: Double
@@ -65,3 +62,6 @@ instance Show SimProgress where
     formatMonths n = let y = show $ n `div` 12
                          m = show $ n `mod` 12 in
                      y ++ " years, " ++ m ++ " months"
+
+    months :: (RealFrac a) => a -> Int
+    months t = round $ t * 12
